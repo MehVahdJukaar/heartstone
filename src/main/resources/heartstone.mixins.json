@@ -1,0 +1,17 @@
+
+{
+  "minVersion": "0.8",
+  "required": true,
+  "compatibilityLevel": "JAVA_16",
+  "refmap": "heartstone.refmap.json",
+  "package": "net.mehvahdjukaar.heartstone.mixins",
+  "mixins": [
+    "MixinDebugPacketSender"
+  ],
+  "client": [
+    "MixinDebugRenderer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

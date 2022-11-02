@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "101",
+    " 1 ",
+    "   "
+  ],
+  "key": {
+    "1": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "0": {
+      "item": "minecraft:heart_of_the_sea"
+    }
+  },
+  "result": {
+    "item": "heartstone:heartstone",
+    "count": 2
+  }
+}
