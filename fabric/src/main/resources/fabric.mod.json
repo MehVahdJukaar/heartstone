@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "heartstone",
+  "version": "${version}",
+  "name": "Heartstone",
+  "description": "A gem to find the ones that matter",
+  "authors": [
+    "Mehvahdjukaar, Plantkillable"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/heartstone",
+    "sources": "https://github.com/MehVahdJukaar/heartstone"
+  },
+  "license": "ARR",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.mehvahdjukaar.heartstone.fabric.HeartstoneFabric"
+    ]
+  },
+  "mixins": [
+    "${mod_id}.mixins.json",
+    "${mod_id}-common.mixins.json"
+  ],
+  "depends": {
+    "fabric": "*",
+    "minecraft": ">=1.19.2",
+    "moonlight": ">=1.19.2-2.1.21"
+  }
+}

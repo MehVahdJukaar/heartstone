@@ -12,10 +12,11 @@ public class HeartstoneFabric implements ModInitializer {
     public void onInitialize() {
 
         Heartstone.commonInit();
+        FabricSetupCallbacks.COMMON_SETUP.add(Heartstone::commonSetup);
 
         if (PlatformHelper.getEnv().isClient()) {
             FabricSetupCallbacks.CLIENT_SETUP.add(HeartstoneClient::init);
         }
-
+        FabricSetupCallbacks.finishModInit(Heartstone.MOD_ID);
     }
 }

@@ -4,7 +4,10 @@ import net.mehvahdjukaar.moonlight.api.platform.PlatformHelper;
 import net.mehvahdjukaar.heartstone.Heartstone;
 import net.mehvahdjukaar.heartstone.HeartstoneClient;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /**
  * Author: MehVahdJukaar
@@ -18,8 +21,13 @@ public class HeartstoneForge {
         if (PlatformHelper.getEnv().isClient()) {
             HeartstoneClient.init();
         }
-        MinecraftForge.EVENT_BUS.register(this);
+        FMLJavaModLoadingContext.get().getModEventBus().register(this);
     }
-    
+
+
+    @SubscribeEvent
+    public void setup(final FMLCommonSetupEvent event) {
+        event.enqueueWork(Heartstone::commonSetup);
+    }
 }
 

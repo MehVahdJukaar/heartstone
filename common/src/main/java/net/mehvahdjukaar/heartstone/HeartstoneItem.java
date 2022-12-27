@@ -1,7 +1,6 @@
 package net.mehvahdjukaar.heartstone;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.sounds.SoundEvents;
@@ -81,7 +80,7 @@ public class HeartstoneItem extends Item {
         super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
         Long id = getId(pStack);
         if (id != null) {
-            pTooltipComponents.add(new TranslatableComponent("message.heartstone.id", id));
+            pTooltipComponents.add(Component.translatable("message.heartstone.id", id));
         }
     }
 

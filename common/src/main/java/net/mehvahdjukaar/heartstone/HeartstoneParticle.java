@@ -1,31 +1,17 @@
 package net.mehvahdjukaar.heartstone;
 
-import net.mehvahdjukaar.owls.client.ClientSetup;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.Nullable;
 
-@Mod.EventBusSubscriber(modid = HeartstoneOld.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class HeartstoneParticle extends TextureSheetParticle {
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void registerParticles(ParticleFactoryRegisterEvent event) {
-        ParticleEngine particleManager = Minecraft.getInstance().particleEngine;
-        particleManager.register(HeartstoneOld.HEARTSTONE_PARTICLE.get(), Factory::new);
-        particleManager.register(HeartstoneOld.HEARTSTONE_PARTICLE_EMITTER.get(), (a, b, c, d, e, f, g, h) -> new Emitter(b, c, d, e, f, g, h));
-    }
-
     public static void spawnParticle(NetworkHandler.ClientBoundSpawnHeartstoneParticlePacket message) {
-        Minecraft.getInstance().level.addParticle(HeartstoneOld.HEARTSTONE_PARTICLE_EMITTER.get(), message.pos.x, message.pos.y, message.pos.z,
+        Minecraft.getInstance().level.addParticle(Heartstone.HEARTSTONE_PARTICLE_EMITTER.get(), message.pos.x, message.pos.y, message.pos.z,
                 message.dist.x, message.dist.y, message.dist.z);
     }
 
@@ -72,7 +58,7 @@ public class HeartstoneParticle extends TextureSheetParticle {
     public static class Emitter extends NoRenderParticle {
         private final int type;
 
-        private Emitter(ClientLevel world, double x, double y, double z, double dx, double dy, double dz) {
+        public Emitter(ClientLevel world, double x, double y, double z, double dx, double dy, double dz) {
             super(world, x, y, z, 0.0D, 0.0D, 0.0D);
             Vec3 v = new Vec3(dx, dy, dz);
             double dist = v.lengthSqr();
@@ -84,14 +70,14 @@ public class HeartstoneParticle extends TextureSheetParticle {
             this.yd = v.y;
             this.zd = v.z;
             world.playSound(Minecraft.getInstance().player, Minecraft.getInstance().player,
-                    HeartstoneOld.HEARTSTONE_SOUND.get(),
-                    Minecraft.getInstance().player.getSoundSource(), 1.0F, 1.25F-type*0.25f);
+                    Heartstone.HEARTSTONE_SOUND.get(),
+                    Minecraft.getInstance().player.getSoundSource(), 1.0F, 1.25F - type * 0.25f);
         }
 
         @Override
         public void tick() {
             ++this.age;
-            this.level.addParticle(HeartstoneOld.HEARTSTONE_PARTICLE.get(),
+            this.level.addParticle(Heartstone.HEARTSTONE_PARTICLE.get(),
                     x + age * 1.2 * xd,
                     y + age * 1.2 * yd,
                     z + age * 1.2 * zd,
@@ -104,6 +90,17 @@ public class HeartstoneParticle extends TextureSheetParticle {
         }
     }
 
+
+    public static class EmitterFactory implements ParticleProvider<SimpleParticleType> {
+        public EmitterFactory(SpriteSet spriteSet) {
+        }
+
+        @Nullable
+        @Override
+        public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+            return new Emitter(level, x,y,z,xSpeed, ySpeed, zSpeed);
+        }
+    }
 
     public static class Factory implements ParticleProvider<SimpleParticleType> {
         private final SpriteSet sprite;

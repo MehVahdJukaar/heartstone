@@ -15,8 +15,8 @@ loom {
         convertAccessWideners = true
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 
-        mixinConfig  "v_slab_compat-common.mixins.json"
-        mixinConfig  "v_slab_compat.mixins.json"
+        mixinConfig  "heartstone-common.mixins.json"
+        mixinConfig  "heartstone.mixins.json"
     }
 }
 

@@ -2,8 +2,6 @@ package net.mehvahdjukaar.heartstone;
 
 import net.mehvahdjukaar.moonlight.api.platform.PlatformHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
-import net.mehvahdjukaar.heartstone.dynamicpack.ClientDynamicResourcesHandler;
-import net.mehvahdjukaar.heartstone.dynamicpack.ServerDynamicResourcesHandler;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -27,9 +25,10 @@ public class Heartstone {
 
     public static void commonInit() {
 
-        if (PlatformHelper.getEnv().isClient()) {
+    }
 
-        }
+    public static void commonSetup() {
+        NetworkHandler.registerMessages();
     }
 
     public static final Supplier<SoundEvent> HEARTSTONE_SOUND = RegHelper.registerSound(res("item.heartstone"),
@@ -37,7 +36,7 @@ public class Heartstone {
 
     public static final Supplier<SimpleParticleType> HEARTSTONE_PARTICLE = RegHelper.registerParticle(res("heartstone_trail"));
 
-    public static final Supplier<SimpleParticleType> HEARTSTONE_PARTICLE_EMITTER = RegHelper.registerParticle(res(("heartstone_emitter");
+    public static final Supplier<SimpleParticleType> HEARTSTONE_PARTICLE_EMITTER = RegHelper.registerParticle(res("heartstone_emitter"));
 
     public static final Supplier<Item> HEARTSTONE = RegHelper.registerItem(res("heartstone"), HeartstoneItem::new);
 

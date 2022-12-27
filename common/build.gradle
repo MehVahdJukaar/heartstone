@@ -3,7 +3,7 @@ architectury {
 }
 
 loom {
-    accessWidenerPath = file("src/main/resources/v_slab_compat.accesswidener")
+    accessWidenerPath = file("src/main/resources/heartstone.accesswidener")
 }
 
 dependencies {
