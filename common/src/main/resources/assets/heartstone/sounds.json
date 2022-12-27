@@ -1,0 +1,12 @@
+{
+  "item.heartstone": {
+    "category": "item",
+    "subtitle": "subtitle.heartstone.sub",
+    "sounds": [
+      {
+        "name": "heartstone:item/heartstone",
+        "stream": true
+      }
+    ]
+  }
+}
