@@ -1,6 +1,8 @@
 package net.mehvahdjukaar.heartstone.fabric;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.mehvahdjukaar.heartstone.Heartstone;
 import net.mehvahdjukaar.heartstone.HeartstoneClient;
 import net.mehvahdjukaar.moonlight.api.platform.PlatformHelper;

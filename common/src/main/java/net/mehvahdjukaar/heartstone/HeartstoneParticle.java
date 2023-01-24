@@ -10,10 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class HeartstoneParticle extends TextureSheetParticle {
 
-    public static void spawnParticle(NetworkHandler.ClientBoundSpawnHeartstoneParticlePacket message) {
-        Minecraft.getInstance().level.addParticle(Heartstone.HEARTSTONE_PARTICLE_EMITTER.get(), message.pos.x, message.pos.y, message.pos.z,
-                message.dist.x, message.dist.y, message.dist.z);
-    }
+
 
     private HeartstoneParticle(ClientLevel world, double x, double y, double z, double motionX, double motionY, double motionZ, SpriteSet sprites) {
         super(world, x, y, z);

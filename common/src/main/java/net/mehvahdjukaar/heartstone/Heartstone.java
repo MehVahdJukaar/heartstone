@@ -2,6 +2,8 @@ package net.mehvahdjukaar.heartstone;
 
 import net.mehvahdjukaar.moonlight.api.platform.PlatformHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
+import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
+import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -23,8 +25,24 @@ public class Heartstone {
         return new ResourceLocation(MOD_ID, name);
     }
 
+    public static Supplier<Integer> highlightColor = () -> 1;
+    public static Supplier<Boolean> highlight = () -> false;
+    public static Supplier<Integer> highlightDistance = () -> 1;
+
     public static void commonInit() {
 
+        if (PlatformHelper.getPlatform().isForge()) {
+            ConfigBuilder config = ConfigBuilder.create(res("client"), ConfigType.CLIENT);
+            config.push("highlight");
+            highlightColor = config.comment("Highlight color")
+                    .defineColor("highlight_color", 0xffE630BF);
+            highlight = config.define("enabled", true);
+            highlightDistance = config.comment("Distance at which the player highlight will take effect")
+                    .define("distance", 20, 0, 10000);
+            config.pop();
+
+            config.buildAndRegister();
+        }
     }
 
     public static void commonSetup() {

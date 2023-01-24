@@ -20,6 +20,7 @@ public class HeartstoneForge {
 
         if (PlatformHelper.getEnv().isClient()) {
             HeartstoneClient.init();
+            HeartstoneClientImpl.init();
         }
         FMLJavaModLoadingContext.get().getModEventBus().register(this);
     }
