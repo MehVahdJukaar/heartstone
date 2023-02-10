@@ -5,6 +5,7 @@ import net.mehvahdjukaar.moonlight.api.platform.ClientPlatformHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 public class HeartstoneClient {
 
@@ -27,10 +28,11 @@ public class HeartstoneClient {
 
 
     public static void spawnParticle(NetworkHandler.ClientBoundSpawnHeartstoneParticlePacket message) {
-        ClientLevel level = Minecraft.getInstance().level;
-        if (level == null) return;
+        Player player = Minecraft.getInstance().player;
+        if (player == null) return;
+        Level level = player.level;
         int d = Heartstone.highlightDistance.get();
-        if (message.target != null && Heartstone.highlight.get() && message.dist.lengthSqr() < d*d) {
+        if (Heartstone.highlight.get() && message.from.equals(player.getUUID()) && message.dist.lengthSqr() < d * d) {
             highlightPlayer(level.getPlayerByUUID(message.target));
         }
         level.addParticle(Heartstone.HEARTSTONE_PARTICLE_EMITTER.get(), message.pos.x, message.pos.y, message.pos.z,
