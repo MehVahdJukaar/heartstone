@@ -22,63 +22,79 @@ public class HeartstoneItem extends Item {
 
     @Override
     public boolean isFoil(ItemStack pStack) {
-        return getId(pStack) != null;
+        return getHeartstoneId(pStack) != null;
     }
 
     @Nullable
-    public Long getId(ItemStack stack) {
+    public static Long getHeartstoneId(ItemStack stack) {
         var tag = stack.getTag();
         if (tag != null && tag.contains("Id")) return tag.getLong("Id");
         return null;
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pHand) {
-        ItemStack itemstack = pPlayer.getItemInHand(pHand);
+    public InteractionResultHolder<ItemStack> use(Level pLevel, Player player, InteractionHand pHand) {
+        ItemStack itemstack = player.getItemInHand(pHand);
         if (pLevel.isClientSide) {
             return InteractionResultHolder.success(itemstack);
         } else {
 
-            pPlayer.awardStat(Stats.ITEM_USED.get(this));
+            player.awardStat(Stats.ITEM_USED.get(this));
 
-            Long id = getId(itemstack);
+            Long id = getHeartstoneId(itemstack);
             boolean success = false;
             if (id != null && pLevel instanceof ServerLevel serverLevel) {
                 PlayerList players = serverLevel.getServer().getPlayerList();
-                for (Player p : players.getPlayers()) {
-                    if (p.getLevel().dimension() == pLevel.dimension() && p != pPlayer) {
-                        var inv = p.getInventory();
-                        for (int i = 0; i < inv.getContainerSize(); ++i) {
-                            ItemStack s = inv.getItem(i);
-                            if (s.getItem() == this) {
-                                var t = s.getTag();
-                                if (t != null && t.getLong("Id") == id) {
-
-                                    NetworkHandler.sendHeartstoneParticles(pPlayer, p);
-                                    success = true;
-                                    break;
-                                }
-                            }
-                        }
+                for (Player targetPlayer : players.getPlayers()) {
+                    if(arePlayersBounded(player, id, targetPlayer)){
+                        NetworkHandler.sendHeartstoneParticles(player, targetPlayer);
+                        success = true;
+                        break;
                     }
                 }
             }
 
             if (!success) {
-                pLevel.playSound(null, pPlayer,
+                pLevel.playSound(null, player,
                         SoundEvents.AMETHYST_BLOCK_FALL,
-                        pPlayer.getSoundSource(), 0.6f, 0.7f);
+                        player.getSoundSource(), 0.6f, 0.7f);
             }
 
-            pPlayer.getCooldowns().addCooldown(this, 60);
+            player.getCooldowns().addCooldown(this, 60);
             return InteractionResultHolder.consume(itemstack);
         }
+    }
+
+    public static boolean arePlayersBounded(Player pPlayer, ItemStack stack , Player target) {
+        if(stack.getItem() instanceof HeartstoneItem hs){
+            Long id = getHeartstoneId(stack);
+            if(id != null) {
+                return hs.arePlayersBounded(pPlayer, id, target);
+            }
+        }
+        return false;
+    }
+
+    private boolean arePlayersBounded(Player pPlayer, Long id, Player target) {
+        if (target.getLevel().dimension() == pPlayer.level.dimension() && target != pPlayer) {
+            var inv = target.getInventory();
+            for (int i = 0; i < inv.getContainerSize(); ++i) {
+                ItemStack s = inv.getItem(i);
+                if (s.getItem() == this) {
+                    var t = s.getTag();
+                    if (t != null && t.getLong("Id") == id) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Override
     public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
         super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
-        Long id = getId(pStack);
+        Long id = getHeartstoneId(pStack);
         if (id != null) {
             pTooltipComponents.add(Component.translatable("message.heartstone.id", id));
         }
