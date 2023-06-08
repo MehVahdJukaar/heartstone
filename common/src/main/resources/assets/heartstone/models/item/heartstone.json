@@ -2,6 +2,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "heartstone:items/heartstone"
+    "layer0": "heartstone:item/heartstone"
   }
 }

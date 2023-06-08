@@ -17,7 +17,7 @@ import java.util.List;
 public class HeartstoneItem extends Item {
 
     public HeartstoneItem() {
-        super(new Properties().tab(CreativeModeTab.TAB_MISC).rarity(Rarity.RARE).stacksTo(2));
+        super(new Properties().rarity(Rarity.RARE).stacksTo(2));
     }
 
     @Override
@@ -46,7 +46,7 @@ public class HeartstoneItem extends Item {
             if (id != null && pLevel instanceof ServerLevel serverLevel) {
                 PlayerList players = serverLevel.getServer().getPlayerList();
                 for (Player targetPlayer : players.getPlayers()) {
-                    if(arePlayersBounded(player, id, targetPlayer)){
+                    if(arePlayersBound(player, id, targetPlayer)){
                         NetworkHandler.sendHeartstoneParticles(player, targetPlayer);
                         success = true;
                         break;
@@ -65,18 +65,18 @@ public class HeartstoneItem extends Item {
         }
     }
 
-    public static boolean arePlayersBounded(Player pPlayer, ItemStack stack , Player target) {
+    public static boolean arePlayersBound(Player pPlayer, ItemStack stack , Player target) {
         if(stack.getItem() instanceof HeartstoneItem hs){
             Long id = getHeartstoneId(stack);
             if(id != null) {
-                return hs.arePlayersBounded(pPlayer, id, target);
+                return hs.arePlayersBound(pPlayer, id, target);
             }
         }
         return false;
     }
 
-    private boolean arePlayersBounded(Player pPlayer, Long id, Player target) {
-        if (target.getLevel().dimension() == pPlayer.level.dimension() && target != pPlayer) {
+    private boolean arePlayersBound(Player pPlayer, Long id, Player target) {
+        if (target.level().dimension() == pPlayer.level().dimension() && target != pPlayer) {
             var inv = target.getInventory();
             for (int i = 0; i < inv.getContainerSize(); ++i) {
                 ItemStack s = inv.getItem(i);

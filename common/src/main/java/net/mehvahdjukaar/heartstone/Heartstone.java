@@ -1,13 +1,15 @@
 package net.mehvahdjukaar.heartstone;
 
-import net.mehvahdjukaar.moonlight.api.platform.PlatformHelper;
+import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,7 +33,7 @@ public class Heartstone {
 
     public static void commonInit() {
 
-        if (PlatformHelper.getPlatform().isForge()) {
+        if (PlatHelper.getPlatform().isForge()) {
             ConfigBuilder config = ConfigBuilder.create(res("client"), ConfigType.CLIENT);
             config.push("highlight");
             highlightColor = config.comment("Highlight color")
@@ -43,14 +45,19 @@ public class Heartstone {
 
             config.buildAndRegister();
         }
+
+        RegHelper.addItemsToTabsRegistration(Heartstone::addItemsToTabs);
+    }
+
+    private static void addItemsToTabs(RegHelper.ItemToTabEvent event) {
+        event.addBefore(CreativeModeTabs.TOOLS_AND_UTILITIES, i->i.is(Items.COMPASS), HEARTSTONE.get());
     }
 
     public static void commonSetup() {
         NetworkHandler.registerMessages();
     }
 
-    public static final Supplier<SoundEvent> HEARTSTONE_SOUND = RegHelper.registerSound(res("item.heartstone"),
-            () -> new SoundEvent(res("item.heartstone")));
+    public static final Supplier<SoundEvent> HEARTSTONE_SOUND = RegHelper.registerSound(res("item.heartstone"));
 
     public static final Supplier<SimpleParticleType> HEARTSTONE_PARTICLE = RegHelper.registerParticle(res("heartstone_trail"));
 
