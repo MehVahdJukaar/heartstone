@@ -1,9 +1,7 @@
-package net.mehvahdjukaar.heartstone.mixins;
+package net.mehvahdjukaar.heartstone.mixins.fabric;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.mehvahdjukaar.heartstone.Heartstone;
 import net.mehvahdjukaar.heartstone.HeartstoneClient;
@@ -44,7 +42,7 @@ public class LevelRendererMixin {
             shift = At.Shift.BEFORE,
             value = "INVOKE"))
     public void renderExtraOutline(PoseStack poseStack, float partialTick, long finishNanoTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f projectionMatrix, CallbackInfo ci,
-                                   @Local Entity entity, @Local(ordinal = 3) LocalBooleanRef flag3) {
+                                   @Local Entity entity, @Local(ordinal = 2) LocalBooleanRef flag3) {
         if (!flag3.get() && HeartstoneClient.isPlayerHighlighted(entity)) {
             flag3.set(true);
         }

@@ -4,6 +4,7 @@
   "package": "net.mehvahdjukaar.heartstone.mixins.fabric",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "LevelRendererMixin"
   ],
   "mixins": [
   ],

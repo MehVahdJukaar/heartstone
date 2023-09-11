@@ -4,6 +4,7 @@
   "package": "net.mehvahdjukaar.heartstone.mixins.forge",
   "compatibilityLevel": "JAVA_16",
   "client": [
+    "LevelRendererMixin"
   ],
   "mixins": [
   ],
