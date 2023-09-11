@@ -1,5 +1,8 @@
 package net.mehvahdjukaar.heartstone;
 
+import net.mehvahdjukaar.heartstone.compat.CurioCompat;
+import net.mehvahdjukaar.heartstone.compat.TrinketsCompat;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.players.PlayerList;
@@ -8,10 +11,14 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HeartstoneItem extends Item {
@@ -46,7 +53,7 @@ public class HeartstoneItem extends Item {
             if (id != null && pLevel instanceof ServerLevel serverLevel) {
                 PlayerList players = serverLevel.getServer().getPlayerList();
                 for (Player targetPlayer : players.getPlayers()) {
-                    if(arePlayersBound(player, id, targetPlayer)){
+                    if (arePlayersBound(player, id, targetPlayer)) {
                         NetworkHandler.sendHeartstoneParticles(player, targetPlayer);
                         success = true;
                         break;
@@ -65,28 +72,54 @@ public class HeartstoneItem extends Item {
         }
     }
 
-    public static boolean arePlayersBound(Player pPlayer, ItemStack stack , Player target) {
-        if(stack.getItem() instanceof HeartstoneItem hs){
+    public static List<ItemStack> getAllHeartstones(Player player) {
+        List<ItemStack> found = new ArrayList<>();
+        player.getInventory().items.stream().filter(i -> i.getItem() instanceof HeartstoneItem).forEach(found::add);
+        if(Heartstone.TRINKETS){
+            ItemStack s = TrinketsCompat.getHeartstone(player);
+            if(!s.isEmpty()) found.add(s);
+        }
+        if(Heartstone.CURIO){
+            ItemStack s = CurioCompat.getHeartstone(player);
+            if(!s.isEmpty()) found.add(s);
+        }
+        return found;
+    }
+
+
+    public static boolean arePlayersBound(Player pPlayer, ItemStack stack, Player target) {
+        if (stack.getItem() instanceof HeartstoneItem hs) {
             Long id = getHeartstoneId(stack);
-            if(id != null) {
+            if (id != null) {
                 return hs.arePlayersBound(pPlayer, id, target);
             }
         }
         return false;
     }
 
-    private boolean arePlayersBound(Player pPlayer, Long id, Player target) {
+    public boolean arePlayersBound(Player pPlayer, Long id, Player target) {
         if (target.level().dimension() == pPlayer.level().dimension() && target != pPlayer) {
             var inv = target.getInventory();
             for (int i = 0; i < inv.getContainerSize(); ++i) {
                 ItemStack s = inv.getItem(i);
-                if (s.getItem() == this) {
-                    var t = s.getTag();
-                    if (t != null && t.getLong("Id") == id) {
-                        return true;
-                    }
-                }
+                if (hasMatchingId(id, s)) return true;
             }
+            if(Heartstone.TRINKETS){
+                ItemStack s = TrinketsCompat.getHeartstone(target);
+                if(!s.isEmpty() && hasMatchingId(id, s)) return true;
+            }
+            if(Heartstone.CURIO){
+                ItemStack s = CurioCompat.getHeartstone(target);
+                return !s.isEmpty() && hasMatchingId(id, s);
+            }
+        }
+        return false;
+    }
+
+    private boolean hasMatchingId(Long id, ItemStack s) {
+        if (s.getItem() == this) {
+            CompoundTag t = s.getTag();
+            return t != null && t.getLong("Id") == id;
         }
         return false;
     }

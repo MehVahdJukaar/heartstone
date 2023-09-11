@@ -1,1 +1,4 @@
-- improved logic
+- added new map marker icons for players bound by a heartstone, only visible if you have the right one
+- added curios and trinkets integration
+- fixed outline not working correctly
+- outline glow now also works on fabric

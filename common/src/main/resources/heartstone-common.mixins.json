@@ -4,8 +4,10 @@
   "package": "net.mehvahdjukaar.heartstone.mixins",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "LevelRendererMixin"
   ],
   "mixins": [
+    "MapItemSavedDataMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,10 +1,10 @@
 package net.mehvahdjukaar.heartstone.fabric;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.mehvahdjukaar.heartstone.Heartstone;
 import net.mehvahdjukaar.heartstone.HeartstoneClient;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
-import net.mehvahdjukaar.moonlight.fabric.MLFabricSetupCallbacks;
 
 public class HeartstoneFabric implements ModInitializer {
 
@@ -12,10 +12,9 @@ public class HeartstoneFabric implements ModInitializer {
     public void onInitialize() {
 
         Heartstone.commonInit();
-        MLFabricSetupCallbacks.COMMON_SETUP.add(Heartstone::commonSetup);
 
         if (PlatHelper.getPhysicalSide().isClient()) {
-            MLFabricSetupCallbacks.CLIENT_SETUP.add(HeartstoneClient::init);
+            ClientTickEvents.END_CLIENT_TICK.register(a -> HeartstoneClient.onClientTick());
         }
     }
 }
