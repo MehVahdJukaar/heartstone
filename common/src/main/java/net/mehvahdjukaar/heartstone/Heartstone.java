@@ -1,14 +1,17 @@
 package net.mehvahdjukaar.heartstone;
 
-import net.mehvahdjukaar.moonlight.api.map.CustomMapDecoration;
-import net.mehvahdjukaar.moonlight.api.map.MapDecorationRegistry;
+import net.mehvahdjukaar.moonlight.api.events.IDropItemOnDeathEvent;
+import net.mehvahdjukaar.moonlight.api.events.MoonlightEventsHelper;
+import net.mehvahdjukaar.moonlight.api.map.MapDataRegistry;
 import net.mehvahdjukaar.moonlight.api.map.markers.MapBlockMarker;
-import net.mehvahdjukaar.moonlight.api.map.type.CustomDecorationType;
 import net.mehvahdjukaar.moonlight.api.map.type.MapDecorationType;
+import net.mehvahdjukaar.moonlight.api.misc.DataObjectReference;
+import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
+import net.mehvahdjukaar.moonlight.core.map.MapDataInternal;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -51,7 +54,7 @@ public class Heartstone {
         ConfigBuilder config = ConfigBuilder.create(res("client"), ConfigType.CLIENT);
         config.push("highlight");
         HIGHLIGHT_COLOR = config.comment("Highlight color")
-                .defineColor("color", 0xffE630BF);
+                .defineColor("color", 0xFF68CF);
         HIGHLIGHT = config.define("enabled", true);
         HIGHLIGHT_DISTANCE = config.comment("Distance at which the player highlight will take effect")
                 .define("distance", 20, 0, 10000);
@@ -72,24 +75,26 @@ public class Heartstone {
 
         RegHelper.addItemsToTabsRegistration(Heartstone::addItemsToTabs);
 
+        MapDataRegistry.addDynamicServerMarkersEvent(Heartstone::getDynamicDecorations);
 
-        MapDecorationRegistry.registerCustomType(CustomDecorationType.dynamic(res("heartstone"),
-                CustomMapDecoration::new, Heartstone::getDynamicDecorations));
+        MoonlightEventsHelper.addListener(Heartstone::onPlayerDeath, IDropItemOnDeathEvent.class);
     }
 
-    private static Set<CustomMapDecoration> getDynamicDecorations(MapDecorationType<?, ?> mapDecorationType,
-                                                                  Player player, MapItemSavedData data) {
+    public static final DataObjectReference<MapDecorationType<?, ?>> HEARTSTONE_MARKER =
+            new DataObjectReference<>(res("heartstone"), MapDataInternal.KEY);
+
+    private static Set<MapBlockMarker<?>> getDynamicDecorations(
+            Player player, int mapId, MapItemSavedData data) {
 
         List<ItemStack> list = HeartstoneItem.getAllHeartstones(player);
         List<Player> visiblePlayers = new ArrayList<>();
         var iterator = new ArrayList<>(player.level().getServer().getPlayerList().getPlayers()).iterator();
 
         for (var i : list) {
-            Long id = HeartstoneItem.getHeartstoneId(i);
             boolean found = false;
             while (iterator.hasNext() && !found) {
                 Player targetPlayer = iterator.next();
-                if (((HeartstoneItem) i.getItem()).arePlayersBound(player, id, targetPlayer)) {
+                if (((HeartstoneItem) i.getItem()).arePlayersBound(player, i, targetPlayer, true)) {
                     visiblePlayers.add(targetPlayer);
                     iterator.remove(); // Remove the player from the list
                     //we break as heartstones are meant to eb used only by 2
@@ -97,20 +102,16 @@ public class Heartstone {
                 }
             }
         }
-        Set<CustomMapDecoration> decorations = new HashSet<>();
+        Set<MapBlockMarker<?>> markers = new HashSet<>();
 
         for (var p : visiblePlayers) {
-            MapBlockMarker<?> defaultMarker = mapDecorationType.getDefaultMarker(p.getOnPos());
-            defaultMarker.setRotation((int) p.getYRot());
-
-            CustomMapDecoration deco = defaultMarker
-                    .createDecorationFromMarker(data.scale, data.centerX, data.centerZ, player.level().dimension(), data.locked);
-            if (deco != null) {
-                deco.setDisplayName(p.getDisplayName());
-                decorations.add(deco);
-            }
+            MapBlockMarker<?> marker = HEARTSTONE_MARKER.get().createEmptyMarker();
+            marker.setPos(p.getOnPos());
+            marker.setRotation((int) p.getYRot());
+            marker.setName(p.getDisplayName());
+            markers.add(marker);
         }
-        return decorations;
+        return markers;
     }
 
 
@@ -131,4 +132,23 @@ public class Heartstone {
     public static final Supplier<Item> HEARTSTONE_ITEM = RegHelper.registerItem(res("heartstone"), HeartstoneItem::new);
 
 
+    @EventCalled
+    public static void onPlayerDeath(IDropItemOnDeathEvent event) {
+        var p = event.getPlayer();
+        if(event.isBeforeDrop()) {
+            var list = HeartstoneItem.getAllHeartstones(p);
+            for (var h : list) {
+                Player target = HeartstoneItem.getBoundPlayer(p, h, false);
+                if (target != null) {
+                    Long id = HeartstoneItem.getHeartstoneId(h);
+                    var targetList = HeartstoneItem.getAllHeartstones(target);
+                    for (var th : targetList) {
+                        if (HeartstoneItem.hasMatchingId(id, th)) {
+                            HeartstoneItem.crack(th, target);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

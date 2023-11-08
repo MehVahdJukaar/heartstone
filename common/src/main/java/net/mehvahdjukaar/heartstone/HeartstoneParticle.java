@@ -3,7 +3,9 @@ package net.mehvahdjukaar.heartstone;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -66,9 +68,15 @@ public class HeartstoneParticle extends TextureSheetParticle {
             this.xd = v.x;
             this.yd = v.y;
             this.zd = v.z;
-            world.playSound(Minecraft.getInstance().player, Minecraft.getInstance().player,
+
+            LocalPlayer player = Minecraft.getInstance().player;
+            world.playSound(player, player,
                     Heartstone.HEARTSTONE_SOUND.get(),
-                    Minecraft.getInstance().player.getSoundSource(), 1.0F, 1.25F - type * 0.25f);
+                    player.getSoundSource(), 1.0F, 1.25F - type * 0.25f);
+
+            world.playSound(player, player,
+                    SoundEvents.AMETHYST_BLOCK_RESONATE,
+                    player.getSoundSource(), 1.0F, 1);
         }
 
         @Override

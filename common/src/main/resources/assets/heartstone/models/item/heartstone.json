@@ -3,5 +3,13 @@
   "parent": "item/generated",
   "textures": {
     "layer0": "heartstone:item/heartstone"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "heartstone:cracked": 1
+      },
+      "model":  "heartstone:item/heartstone_cracked"
+    }
+  ]
 }

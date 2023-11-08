@@ -6,7 +6,6 @@
   "client": [
   ],
   "mixins": [
-    "MapItemSavedDataMixin"
   ],
   "injectors": {
     "defaultRequire": 1

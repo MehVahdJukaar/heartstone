@@ -18,8 +18,8 @@ dependencies {
     modCompileOnly "dev.emi:trinkets:${project.trinkets_version}"
     modCompileOnly("curse.maven:curios-309927:4581099")
 
-    annotationProcessor("com.github.LlamaLad7:MixinExtras:0.2.0-beta.10")
-    implementation("com.github.LlamaLad7:MixinExtras:0.2.0-beta.10")
+    annotationProcessor("com.github.LlamaLad7:MixinExtras:${mixin_extras_version}")
+    implementation("com.github.LlamaLad7:MixinExtras:${mixin_extras_version}")
 }
 
 publishing {

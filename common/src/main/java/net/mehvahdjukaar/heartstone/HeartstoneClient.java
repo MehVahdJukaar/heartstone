@@ -2,6 +2,8 @@ package net.mehvahdjukaar.heartstone;
 
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -16,6 +18,8 @@ public class HeartstoneClient {
 
     public static void init() {
         ClientHelper.addParticleRegistration(HeartstoneClient::registerParticles);
+        ClientHelper.addClientSetup(() -> ItemProperties.register(Heartstone.HEARTSTONE_ITEM.get(),
+                Heartstone.res("cracked"), (itemStack, clientLevel, livingEntity, i) -> HeartstoneItem.isCracked(itemStack) ? 1:0));
     }
 
     private static void registerParticles(ClientHelper.ParticleEvent event) {

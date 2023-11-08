@@ -1,2 +1,7 @@
 accessWidener   v2  named
 
+mutable field net/minecraft/world/item/crafting/FireworkStarRecipe SHAPE_BY_ITEM Ljava/util/Map;
+accessible field net/minecraft/world/item/crafting/FireworkStarRecipe SHAPE_BY_ITEM Ljava/util/Map;
+
+accessible field net/minecraft/world/item/crafting/FireworkStarRecipe SHAPE_INGREDIENT Lnet/minecraft/world/item/crafting/Ingredient;
+mutable field net/minecraft/world/item/crafting/FireworkStarRecipe SHAPE_INGREDIENT Lnet/minecraft/world/item/crafting/Ingredient;
