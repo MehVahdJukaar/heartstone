@@ -5,21 +5,21 @@ import net.mehvahdjukaar.moonlight.api.events.MoonlightEventsHelper;
 import net.mehvahdjukaar.moonlight.api.map.MapDataRegistry;
 import net.mehvahdjukaar.moonlight.api.map.markers.MapBlockMarker;
 import net.mehvahdjukaar.moonlight.api.map.type.MapDecorationType;
-import net.mehvahdjukaar.moonlight.api.misc.DataObjectReference;
+import net.mehvahdjukaar.moonlight.api.misc.DynamicHolder;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
+import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
-import net.mehvahdjukaar.moonlight.core.map.MapDataInternal;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,6 +44,25 @@ public class Heartstone {
     public static ResourceLocation res(String name) {
         return new ResourceLocation(MOD_ID, name);
     }
+
+    public static final Supplier<SoundEvent> HEARTSTONE_SOUND = RegHelper.registerSound(res("item.heartstone"));
+
+    public static final Supplier<SimpleParticleType> HEARTSTONE_PARTICLE = RegHelper.registerParticle(res("heartstone_trail"));
+
+    public static final Supplier<SimpleParticleType> HEARTSTONE_PARTICLE_EMITTER = RegHelper.registerParticle(res("heartstone_emitter"));
+
+    public static final Supplier<Item> HEARTSTONE_ITEM = RegHelper.registerItem(res("heartstone"), HeartstoneItem::new);
+
+    public static final Supplier<BannerPattern> HEART_PATTERN = RegHelper.registerBannerPattern(res("heart"),
+            res("heart").toString());
+
+    public static final TagKey<BannerPattern> HEART_TAG = TagKey.create(
+            Registries.BANNER_PATTERN, res("heart")
+    );
+    public static final Supplier<Item> HEART_PATTERN_ITEM = RegHelper.registerItem(res("heart_banner_pattern"),
+            () -> new BannerPatternItem(HEART_TAG, new Item.Properties()
+                    .rarity(Rarity.RARE)));
+
 
     public static final Supplier<Integer> HIGHLIGHT_COLOR;
     public static final Supplier<Boolean> HIGHLIGHT;
@@ -71,6 +90,7 @@ public class Heartstone {
 
         if (PlatHelper.getPhysicalSide().isClient()) {
             HeartstoneClient.init();
+            ClientHelper.registerOptionalTexturePack(res("heart_particles"));
         }
 
         RegHelper.addItemsToTabsRegistration(Heartstone::addItemsToTabs);
@@ -80,8 +100,8 @@ public class Heartstone {
         MoonlightEventsHelper.addListener(Heartstone::onPlayerDeath, IDropItemOnDeathEvent.class);
     }
 
-    public static final DataObjectReference<MapDecorationType<?, ?>> HEARTSTONE_MARKER =
-            new DataObjectReference<>(res("heartstone"), MapDataInternal.KEY);
+    public static final DynamicHolder<MapDecorationType<?, ?>> HEARTSTONE_MARKER =
+            DynamicHolder.of(res("heartstone"), MapDataRegistry.REGISTRY_KEY);
 
     private static Set<MapBlockMarker<?>> getDynamicDecorations(
             Player player, int mapId, MapItemSavedData data) {
@@ -105,7 +125,7 @@ public class Heartstone {
         Set<MapBlockMarker<?>> markers = new HashSet<>();
 
         for (var p : visiblePlayers) {
-            MapBlockMarker<?> marker = HEARTSTONE_MARKER.get().createEmptyMarker();
+            MapBlockMarker<?> marker = HEARTSTONE_MARKER.value().createEmptyMarker();
             marker.setPos(p.getOnPos());
             marker.setRotation((int) p.getYRot());
             marker.setName(p.getDisplayName());
@@ -116,6 +136,7 @@ public class Heartstone {
 
 
     private static void addItemsToTabs(RegHelper.ItemToTabEvent event) {
+        event.addAfter(CreativeModeTabs.INGREDIENTS, i->i.is(Items.PIGLIN_BANNER_PATTERN), HEART_PATTERN_ITEM.get());
         event.addBefore(CreativeModeTabs.TOOLS_AND_UTILITIES, i -> i.is(Items.COMPASS), HEARTSTONE_ITEM.get());
     }
 
@@ -123,19 +144,10 @@ public class Heartstone {
         NetworkHandler.registerMessages();
     }
 
-    public static final Supplier<SoundEvent> HEARTSTONE_SOUND = RegHelper.registerSound(res("item.heartstone"));
-
-    public static final Supplier<SimpleParticleType> HEARTSTONE_PARTICLE = RegHelper.registerParticle(res("heartstone_trail"));
-
-    public static final Supplier<SimpleParticleType> HEARTSTONE_PARTICLE_EMITTER = RegHelper.registerParticle(res("heartstone_emitter"));
-
-    public static final Supplier<Item> HEARTSTONE_ITEM = RegHelper.registerItem(res("heartstone"), HeartstoneItem::new);
-
-
     @EventCalled
     public static void onPlayerDeath(IDropItemOnDeathEvent event) {
         var p = event.getPlayer();
-        if(event.isBeforeDrop()) {
+        if (event.isBeforeDrop()) {
             var list = HeartstoneItem.getAllHeartstones(p);
             for (var h : list) {
                 Player target = HeartstoneItem.getBoundPlayer(p, h, false);
