@@ -57,7 +57,7 @@ public class Heartstone {
             res("heart").toString());
 
     public static final TagKey<BannerPattern> HEART_TAG = TagKey.create(
-            Registries.BANNER_PATTERN, res("heart")
+            Registries.BANNER_PATTERN, res("pattern_item/heart")
     );
     public static final Supplier<Item> HEART_PATTERN_ITEM = RegHelper.registerItem(res("heart_banner_pattern"),
             () -> new BannerPatternItem(HEART_TAG, new Item.Properties()

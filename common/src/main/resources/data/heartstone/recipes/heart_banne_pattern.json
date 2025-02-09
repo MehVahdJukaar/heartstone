@@ -6,11 +6,11 @@
       "item": "minecraft:paper"
     },
     {
-      "item": "heartstone:heartstone_head"
+      "item": "heartstone:heartstone"
     }
   ],
   "result": {
     "count": 1,
-    "item": "heartstone:heat_banner_pattern"
+    "item": "heartstone:heart_banner_pattern"
   }
 }

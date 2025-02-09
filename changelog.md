@@ -1,1 +1,1 @@
-updated to work with newest moonlight map marker api
+- added heart banner pattern
