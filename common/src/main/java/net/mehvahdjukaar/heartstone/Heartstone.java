@@ -3,10 +3,11 @@ package net.mehvahdjukaar.heartstone;
 import net.mehvahdjukaar.moonlight.api.events.IDropItemOnDeathEvent;
 import net.mehvahdjukaar.moonlight.api.events.MoonlightEventsHelper;
 import net.mehvahdjukaar.moonlight.api.map.MapDataRegistry;
-import net.mehvahdjukaar.moonlight.api.map.markers.MapBlockMarker;
-import net.mehvahdjukaar.moonlight.api.map.type.MapDecorationType;
-import net.mehvahdjukaar.moonlight.api.misc.DynamicHolder;
+import net.mehvahdjukaar.moonlight.api.map.decoration.MLMapDecorationType;
+import net.mehvahdjukaar.moonlight.api.map.decoration.MLMapMarker;
+import net.mehvahdjukaar.moonlight.api.map.decoration.SimpleMapMarker;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
+import net.mehvahdjukaar.moonlight.api.misc.HolderReference;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
@@ -20,14 +21,12 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.world.level.saveddata.maps.MapId;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 
 /**
@@ -42,7 +41,7 @@ public class Heartstone {
     public static final boolean TRINKETS = PlatHelper.isModLoaded("trinkets");
 
     public static ResourceLocation res(String name) {
-        return new ResourceLocation(MOD_ID, name);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
     }
 
     public static final Supplier<SoundEvent> HEARTSTONE_SOUND = RegHelper.registerSound(res("item.heartstone"));
@@ -52,9 +51,6 @@ public class Heartstone {
     public static final Supplier<SimpleParticleType> HEARTSTONE_PARTICLE_EMITTER = RegHelper.registerParticle(res("heartstone_emitter"));
 
     public static final Supplier<Item> HEARTSTONE_ITEM = RegHelper.registerItem(res("heartstone"), HeartstoneItem::new);
-
-    public static final Supplier<BannerPattern> HEART_PATTERN = RegHelper.registerBannerPattern(res("heart"),
-            res("heart").toString());
 
     public static final TagKey<BannerPattern> HEART_TAG = TagKey.create(
             Registries.BANNER_PATTERN, res("pattern_item/heart")
@@ -81,7 +77,7 @@ public class Heartstone {
                 .define("duration", 5 * 20, 0, 10000);
         config.pop();
 
-        config.buildAndRegister();
+        config.build();
     }
 
     public static void commonInit() {
@@ -90,7 +86,7 @@ public class Heartstone {
 
         if (PlatHelper.getPhysicalSide().isClient()) {
             HeartstoneClient.init();
-            ClientHelper.registerOptionalTexturePack(res("heart_particles"));
+            ClientHelper.registerOptionalTexturePack(res("heart_particles"), false);
         }
 
         RegHelper.addItemsToTabsRegistration(Heartstone::addItemsToTabs);
@@ -100,11 +96,12 @@ public class Heartstone {
         MoonlightEventsHelper.addListener(Heartstone::onPlayerDeath, IDropItemOnDeathEvent.class);
     }
 
-    public static final DynamicHolder<MapDecorationType<?, ?>> HEARTSTONE_MARKER =
-            DynamicHolder.of(res("heartstone"), MapDataRegistry.REGISTRY_KEY);
+    public static final HolderReference<MLMapDecorationType<?, ?>> HEARTSTONE_MARKER =
+            HolderReference.of(res("heartstone"), MapDataRegistry.REGISTRY_KEY);
 
-    private static Set<MapBlockMarker<?>> getDynamicDecorations(
-            Player player, int mapId, MapItemSavedData data) {
+
+    private static Set<MLMapMarker<?>> getDynamicDecorations(
+            Player player, MapId mapId, MapItemSavedData data) {
 
         List<ItemStack> list = HeartstoneItem.getAllHeartstones(player);
         List<Player> visiblePlayers = new ArrayList<>();
@@ -122,13 +119,11 @@ public class Heartstone {
                 }
             }
         }
-        Set<MapBlockMarker<?>> markers = new HashSet<>();
+        Set<MLMapMarker<?>> markers = new HashSet<>();
 
         for (var p : visiblePlayers) {
-            MapBlockMarker<?> marker = HEARTSTONE_MARKER.value().createEmptyMarker();
-            marker.setPos(p.getOnPos());
-            marker.setRotation((int) p.getYRot());
-            marker.setName(p.getDisplayName());
+            MLMapMarker<?> marker = new SimpleMapMarker(HEARTSTONE_MARKER.getHolder(player.level()),
+                    p.getOnPos(), p.getYRot(), Optional.ofNullable(p.getDisplayName()));
             markers.add(marker);
         }
         return markers;
@@ -136,7 +131,7 @@ public class Heartstone {
 
 
     private static void addItemsToTabs(RegHelper.ItemToTabEvent event) {
-        event.addAfter(CreativeModeTabs.INGREDIENTS, i->i.is(Items.PIGLIN_BANNER_PATTERN), HEART_PATTERN_ITEM.get());
+        event.addAfter(CreativeModeTabs.INGREDIENTS, i -> i.is(Items.PIGLIN_BANNER_PATTERN), HEART_PATTERN_ITEM.get());
         event.addBefore(CreativeModeTabs.TOOLS_AND_UTILITIES, i -> i.is(Items.COMPASS), HEARTSTONE_ITEM.get());
     }
 
