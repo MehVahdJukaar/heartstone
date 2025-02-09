@@ -32,7 +32,7 @@ public class HeartstoneForge {
         }
     }
 
-    public static final FireworkExplosion.Shape FIREWORK_SHAPE = FireworkExplosion.Shape.valueOf("HEATSTONE_HEART");
+    public static final FireworkExplosion.Shape FIREWORK_SHAPE = FireworkExplosion.Shape.valueOf("HEARTSTONE_HEART");
 
 
     public static void setup() {

@@ -3,7 +3,7 @@
   "subtitle.heartstone.sub": "Heartstone thud",
   "message.heartstone.id": "Id: %s",
   "message.heartstone.cracked": "Cracked",
-  "item.minecraft.firework_star.shape.heartstone": "Heart Shaped",
+  "item.minecraft.firework_star.shape.heartstone:heart": "Heart Shaped",
 
   "block.heartstone.banner.heart.black": "Black Heart",
   "block.heartstone.banner.heart.blue": "Blue Heart",

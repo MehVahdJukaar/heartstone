@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.mehvahdjukaar.heartstone.Heartstone;
 import net.mehvahdjukaar.heartstone.HeartstoneClient;
 import net.minecraft.client.Camera;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.*;
 import net.minecraft.world.entity.Entity;
 import org.joml.Matrix4f;
@@ -41,8 +42,7 @@ public class LevelRendererMixin {
     @Inject(method = "renderLevel", at = @At(target = "Lnet/minecraft/client/renderer/LevelRenderer;renderEntity(Lnet/minecraft/world/entity/Entity;DDDFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;)V",
             shift = At.Shift.BEFORE,
             value = "INVOKE"))
-    public void renderExtraOutline(PoseStack poseStack, float partialTick, long finishNanoTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f projectionMatrix, CallbackInfo ci,
-                                   @Local Entity entity, @Local(ordinal = 2) LocalBooleanRef flag3) {
+    public void renderExtraOutline(DeltaTracker deltaTracker, boolean bl, Camera camera, GameRenderer gameRenderer, LightTexture lightTexture, Matrix4f matrix4f, Matrix4f matrix4f2, CallbackInfo ci, @Local Entity entity, @Local(ordinal = 2) LocalBooleanRef flag3) {
         if (!flag3.get() && HeartstoneClient.isPlayerHighlighted(entity)) {
             flag3.set(true);
         }
