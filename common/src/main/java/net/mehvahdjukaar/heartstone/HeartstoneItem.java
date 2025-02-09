@@ -7,12 +7,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.Unit;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class HeartstoneItem extends Item {
 
@@ -37,24 +36,21 @@ public class HeartstoneItem extends Item {
 
     @Nullable
     public static Long getHeartstoneId(ItemStack stack) {
-        var tag = stack.getTag();
-        if (tag != null && tag.contains("Id")) return tag.getLong("Id");
-        return null;
+        return stack.getOrDefault(Heartstone.HEARTSTONE_ID.get(), null);
     }
 
     public static boolean isCracked(ItemStack stack) {
-        var tag = stack.getTag();
-        return tag != null && tag.getBoolean("Cracked");
+        return stack.has(Heartstone.CRACKED.get());
     }
 
     public static void crack(ItemStack stack, Entity entity) {
-        stack.getOrCreateTag().putBoolean("Cracked", true);
+        stack.set(Heartstone.CRACKED.get(), Unit.INSTANCE);
         if (entity instanceof Player p) {
             if (p.getMainHandItem() == stack) {
-                p.broadcastBreakEvent(EquipmentSlot.MAINHAND);
+                p.onEquippedItemBroken(stack.getItem(), EquipmentSlot.MAINHAND);
             }
             if (p.getOffhandItem() == stack) {
-                p.broadcastBreakEvent(EquipmentSlot.OFFHAND);
+                p.onEquippedItemBroken(stack.getItem(), EquipmentSlot.OFFHAND);
             }
         }
         entity.playSound(SoundEvents.AMETHYST_CLUSTER_BREAK, 0.6f, 1.3f);
@@ -66,7 +62,7 @@ public class HeartstoneItem extends Item {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
         if (isCracked(stack) && (level.getGameTime() + 1) % 40 == 0 && entity instanceof Player p) {
             if (getBoundPlayer(p, stack, false) != null) {
-                stack.removeTagKey("Cracked");
+                stack.remove(Heartstone.CRACKED.get());
                 entity.playSound(SoundEvents.AMETHYST_BLOCK_RESONATE, 0.8f, 0.7f);
                 entity.playSound(SoundEvents.ALLAY_ITEM_TAKEN, 1.1f, 1.2f);
             }
@@ -157,23 +153,22 @@ public class HeartstoneItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
-        super.appendHoverText(pStack, pLevel, pTooltipComponents, pIsAdvanced);
-        Long id = getHeartstoneId(pStack);
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+        Long id = getHeartstoneId(stack);
         if (id != null) {
-            pTooltipComponents.add(Component.translatable("message.heartstone.id", id));
+            tooltipComponents.add(Component.translatable("message.heartstone.id", id));
         }
-        if(isCracked(pStack)){
-            pTooltipComponents.add(Component.translatable("message.heartstone.cracked"));
+        if (isCracked(stack)) {
+            tooltipComponents.add(Component.translatable("message.heartstone.cracked"));
         }
     }
 
     @Override
     public void onCraftedBy(ItemStack pStack, Level pLevel, Player pPlayer) {
         super.onCraftedBy(pStack, pLevel, pPlayer);
-        var tag = pStack.getOrCreateTag();
-        if (!tag.contains("Id") && pLevel instanceof ServerLevel serverLevel) {
-            tag.putLong("Id", HeartstoneData.getNewId(serverLevel));
+        if (getHeartstoneId(pStack) == null && pLevel instanceof ServerLevel serverLevel) {
+            pStack.set(Heartstone.HEARTSTONE_ID.get(), HeartstoneData.getNewId(serverLevel));
         }
     }
 }

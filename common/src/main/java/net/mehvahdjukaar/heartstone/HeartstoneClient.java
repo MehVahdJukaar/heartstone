@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 import java.lang.ref.WeakReference;
 
@@ -33,11 +34,13 @@ public class HeartstoneClient {
         if (player == null) return;
         Level level = player.level();
         int d = Heartstone.HIGHLIGHT_DISTANCE.get();
-        if (Heartstone.HIGHLIGHT.get() && message.from.equals(player.getUUID()) && message.dist.lengthSqr() < d * d) {
-            highlightPlayer(level.getPlayerByUUID(message.target));
+        if (Heartstone.HIGHLIGHT.get() && message.from().equals(player.getUUID()) && message.dist().lengthSqr() < d * d) {
+            highlightPlayer(level.getPlayerByUUID(message.target()));
         }
-        level.addParticle(Heartstone.HEARTSTONE_PARTICLE_EMITTER.get(), message.pos.x, message.pos.y, message.pos.z,
-                message.dist.x, message.dist.y, message.dist.z);
+        Vec3 dist = message.dist();
+        Vec3 pos = message.pos();
+        level.addParticle(Heartstone.HEARTSTONE_PARTICLE_EMITTER.get(), pos.x, pos.y, pos.z,
+                dist.x, dist.y, dist.z);
     }
 
     public static void onClientTick() {

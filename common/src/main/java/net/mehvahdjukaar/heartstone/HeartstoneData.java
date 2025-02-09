@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.heartstone;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -16,18 +17,20 @@ public class HeartstoneData extends SavedData {
     }
 
     @Override
-    public CompoundTag save(CompoundTag nbt) {
-        nbt.putLong("index", this.currentIndex);
-        return nbt;
+    public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
+        tag.putLong("index", this.currentIndex);
+        return tag;
     }
 
-    public HeartstoneData(CompoundTag tag) {
-        this.currentIndex = tag.getLong("index");
+    //from tag
+    private static HeartstoneData load(CompoundTag tag, HolderLookup.Provider provider) {
+        return new HeartstoneData(tag.getLong("index"));
     }
 
     public static HeartstoneData get(ServerLevel world) {
-        return world.getServer().overworld().getDataStorage().computeIfAbsent(HeartstoneData::new,
-                () -> new HeartstoneData(0L),
+        return world.getServer().overworld().getDataStorage().computeIfAbsent(
+                new SavedData.Factory<>(() -> new HeartstoneData(0),
+                        HeartstoneData::load, null),
                 DATA_NAME);
     }
 

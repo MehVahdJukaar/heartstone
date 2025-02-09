@@ -1,5 +1,6 @@
 package net.mehvahdjukaar.heartstone;
 
+import com.mojang.serialization.Codec;
 import net.mehvahdjukaar.moonlight.api.events.IDropItemOnDeathEvent;
 import net.mehvahdjukaar.moonlight.api.events.MoonlightEventsHelper;
 import net.mehvahdjukaar.moonlight.api.map.MapDataRegistry;
@@ -13,11 +14,15 @@ import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigBuilder;
 import net.mehvahdjukaar.moonlight.api.platform.configs.ConfigType;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Unit;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.entity.BannerPattern;
@@ -49,6 +54,17 @@ public class Heartstone {
     public static final Supplier<SimpleParticleType> HEARTSTONE_PARTICLE = RegHelper.registerParticle(res("heartstone_trail"));
 
     public static final Supplier<SimpleParticleType> HEARTSTONE_PARTICLE_EMITTER = RegHelper.registerParticle(res("heartstone_emitter"));
+
+    public static final Supplier<DataComponentType<Long>> HEARTSTONE_ID = RegHelper.registerDataComponent(res("heartstone_id"),
+            () -> DataComponentType.<Long>builder()
+                    .persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG)
+                    .build());
+
+
+    public static final Supplier<DataComponentType<Unit>> CRACKED = RegHelper.registerDataComponent(res("cracked"),
+            () -> DataComponentType.<Unit>builder()
+                    .persistent(Unit.CODEC).networkSynchronized(StreamCodec.unit(Unit.INSTANCE))
+                    .build());
 
     public static final Supplier<Item> HEARTSTONE_ITEM = RegHelper.registerItem(res("heartstone"), HeartstoneItem::new);
 
@@ -82,7 +98,7 @@ public class Heartstone {
 
     public static void commonInit() {
 
-        PlatHelper.addCommonSetup(Heartstone::commonSetup);
+        NetworkHandler.init();
 
         if (PlatHelper.getPhysicalSide().isClient()) {
             HeartstoneClient.init();
@@ -135,9 +151,6 @@ public class Heartstone {
         event.addBefore(CreativeModeTabs.TOOLS_AND_UTILITIES, i -> i.is(Items.COMPASS), HEARTSTONE_ITEM.get());
     }
 
-    public static void commonSetup() {
-        NetworkHandler.registerMessages();
-    }
 
     @EventCalled
     public static void onPlayerDeath(IDropItemOnDeathEvent event) {
