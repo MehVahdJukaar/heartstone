@@ -1,16 +1,15 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "misc",
   "ingredients": [
     {
-      "item": "minecraft:paper"
+      "item": "heartstone:heartstone"
     },
     {
       "item": "heartstone:heartstone"
     }
   ],
   "result": {
-    "count": 1,
-    "item": "heartstone:heart_banner_pattern"
+    "id": "heartstone:heartstone",
+    "count": 2
   }
 }

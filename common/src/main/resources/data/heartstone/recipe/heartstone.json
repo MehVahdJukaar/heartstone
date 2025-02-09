@@ -14,7 +14,7 @@
     }
   },
   "result": {
-    "item": "heartstone:heartstone",
+    "id": "heartstone:heartstone",
     "count": 2
   }
 }

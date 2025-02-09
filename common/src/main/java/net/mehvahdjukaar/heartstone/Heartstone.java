@@ -147,7 +147,7 @@ public class Heartstone {
 
 
     private static void addItemsToTabs(RegHelper.ItemToTabEvent event) {
-        event.addAfter(CreativeModeTabs.INGREDIENTS, i -> i.is(Items.PIGLIN_BANNER_PATTERN), HEART_PATTERN_ITEM.get());
+        event.addAfter(CreativeModeTabs.INGREDIENTS, i -> i.is(Items.GUSTER_BANNER_PATTERN), HEART_PATTERN_ITEM.get());
         event.addBefore(CreativeModeTabs.TOOLS_AND_UTILITIES, i -> i.is(Items.COMPASS), HEARTSTONE_ITEM.get());
     }
 

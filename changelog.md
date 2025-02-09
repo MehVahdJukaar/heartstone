@@ -1,2 +1,1 @@
-- added heart banner pattern
-- added optional resource pack that makes particles heart shaped
+1.21

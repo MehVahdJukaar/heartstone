@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.heartstone.forge;
+package net.mehvahdjukaar.heartstone.neoforge;
 
 import net.mehvahdjukaar.heartstone.Heartstone;
 import net.mehvahdjukaar.heartstone.HeartstoneClient;

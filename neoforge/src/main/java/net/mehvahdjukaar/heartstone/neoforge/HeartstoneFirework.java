@@ -1,4 +1,4 @@
-package net.mehvahdjukaar.heartstone.forge;
+package net.mehvahdjukaar.heartstone.neoforge;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
