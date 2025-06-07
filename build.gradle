@@ -38,7 +38,7 @@ subprojects {
 
     if (env.MODRINTH_TOKEN) {
         modrinth {
-            projectId = "smarter-farmers-farmers-replant"
+            projectId = mod_id
             uploadFile = tasks.remapJar
             gameVersions = [minecraft_version, minecraft_min_version]
             loaders = [modLoader]
@@ -78,10 +78,12 @@ subprojects {
                     relations {
                         requiredDependency "fabric-api"
                         requiredDependency "selene"
+                        optionalDependency "sleep-tight"
                     }
                 } else {
                     relations {
                         requiredDependency "selene"
+                        optionalDependency "sleep-tight"
                     }
                 }
             }
