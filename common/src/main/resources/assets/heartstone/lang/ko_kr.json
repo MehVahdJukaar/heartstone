@@ -1,0 +1,26 @@
+{
+  "item.heartstone.heartstone": "하트스톤",
+  "subtitle.heartstone.sub": "하트스톤이 두근댐",
+  "message.heartstone.id": "Id: %s",
+  "message.heartstone.cracked": "깨짐",
+  "item.minecraft.firework_star.shape.heartstone:heart": "하트 모양",
+
+  "block.heartstone.banner.heart.black": "검은색 하트",
+  "block.heartstone.banner.heart.blue": "파란색 하트",
+  "block.heartstone.banner.heart.brown": "갈색 하트",
+  "block.heartstone.banner.heart.cyan": "청록색 하트",
+  "block.heartstone.banner.heart.gray": "회색 하트",
+  "block.heartstone.banner.heart.green": "초록색 하트",
+  "block.heartstone.banner.heart.light_blue": "하늘색 하트",
+  "block.heartstone.banner.heart.light_gray": "회백색 하트",
+  "block.heartstone.banner.heart.lime": "연두색 하트",
+  "block.heartstone.banner.heart.magenta": "자홍색 하트",
+  "block.heartstone.banner.heart.orange": "주황색 하트",
+  "block.heartstone.banner.heart.pink": "분홍색 하트",
+  "block.heartstone.banner.heart.purple": "보라색 하트",
+  "block.heartstone.banner.heart.red": "빨간색 하트",
+  "block.heartstone.banner.heart.white": "하얀색 하트",
+  "block.heartstone.banner.heart.yellow": "노란색 하트",
+  "item.heartstone.heart_banner_pattern.desc": "하트",
+  "item.heartstone.heart_banner_pattern": "현수막 무늬"
+}
