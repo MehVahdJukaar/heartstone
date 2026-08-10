@@ -9,6 +9,7 @@ import net.mehvahdjukaar.moonlight.api.map.decoration.MLMapMarker;
 import net.mehvahdjukaar.moonlight.api.map.decoration.SimpleMapMarker;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
 import net.mehvahdjukaar.moonlight.api.misc.HolderRef;
+import net.mehvahdjukaar.moonlight.api.misc.WorldSavedDataType;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
@@ -42,7 +43,7 @@ public class Heartstone {
     public static final String MOD_ID = "heartstone";
     public static final Logger LOGGER = LogManager.getLogger();
 
-    public static final boolean CURIO = PlatHelper.isModLoaded("curio");
+    public static final boolean CURIO = PlatHelper.isModLoaded("curios");
     public static final boolean TRINKETS = PlatHelper.isModLoaded("trinkets");
 
     public static ResourceLocation res(String name) {
@@ -68,6 +69,9 @@ public class Heartstone {
 
     public static final Supplier<Item> HEARTSTONE_ITEM = RegHelper.registerItem(res("heartstone"), HeartstoneItem::new);
 
+    public static final WorldSavedDataType<HeartstoneData> HEARTSTONE_DATA = RegHelper.registerWorldSavedData(
+            res("ids"), HeartstoneData::create, () -> HeartstoneData.CODEC, null);
+
     public static final TagKey<BannerPattern> HEART_TAG = TagKey.create(
             Registries.BANNER_PATTERN, res("pattern_item/heart")
     );
@@ -84,12 +88,15 @@ public class Heartstone {
     static {
         ConfigBuilder config = ConfigBuilder.create(res("client"), ConfigType.CLIENT);
         config.push("highlight");
+        // ARGB. The alpha byte is not optional here: leaving it out makes the config screen show a
+        // fully transparent swatch
         HIGHLIGHT_COLOR = config.comment("Highlight color")
-                .defineColor("color", 0xFF68CF);
-        HIGHLIGHT = config.define("enabled", true);
+                .defineColor("color", 0xFFFF68CF);
+        HIGHLIGHT = config.comment("Outline the bound player when you use a heartstone")
+                .define("enabled", true);
         HIGHLIGHT_DISTANCE = config.comment("Distance at which the player highlight will take effect")
                 .define("distance", 20, 0, 10000);
-        HIGHLIGHT_DURATION = config
+        HIGHLIGHT_DURATION = config.comment("How long the highlight lasts, in ticks")
                 .define("duration", 5 * 20, 0, 10000);
         config.pop();
 
@@ -119,28 +126,17 @@ public class Heartstone {
     private static Set<MLMapMarker<?>> getDynamicDecorations(
             Player player, MapId mapId, MapItemSavedData data) {
 
-        List<ItemStack> list = HeartstoneItem.getAllHeartstones(player);
-        List<Player> visiblePlayers = new ArrayList<>();
-        var iterator = new ArrayList<>(player.level().getServer().getPlayerList().getPlayers()).iterator();
-
-        for (var i : list) {
-            boolean found = false;
-            while (iterator.hasNext() && !found) {
-                Player targetPlayer = iterator.next();
-                if (((HeartstoneItem) i.getItem()).arePlayersBound(player, i, targetPlayer, true)) {
-                    visiblePlayers.add(targetPlayer);
-                    iterator.remove(); // Remove the player from the list
-                    //we break as heartstones are meant to eb used only by 2
-                    found = true;
-                }
-            }
-        }
         Set<MLMapMarker<?>> markers = new HashSet<>();
+        Set<Player> alreadyMarked = new HashSet<>();
 
-        for (var p : visiblePlayers) {
-            MLMapMarker<?> marker = new SimpleMapMarker(HEARTSTONE_MARKER.getHolder(player.level()),
-                    p.getOnPos(), p.getYRot(), Optional.ofNullable(p.getDisplayName()));
-            markers.add(marker);
+        // a heartstone is meant to be shared between 2 people, so each one contributes at most one marker
+        for (ItemStack stack : HeartstoneItem.getAllHeartstones(player)) {
+            Player boundPlayer = HeartstoneItem.getBoundPlayer(player, stack, true);
+            if (boundPlayer != null && alreadyMarked.add(boundPlayer)) {
+                markers.add(new SimpleMapMarker(HEARTSTONE_MARKER.getHolder(player.level()),
+                        boundPlayer.getOnPos(), boundPlayer.getYRot(),
+                        Optional.ofNullable(boundPlayer.getDisplayName())));
+            }
         }
         return markers;
     }

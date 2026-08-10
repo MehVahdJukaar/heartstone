@@ -10,9 +10,9 @@ import java.util.List;
 
 public class CurioCompat {
 
-    public static ItemStack getHeartstone(Player player) {
-        List<SlotResult> found = CuriosApi.getCuriosHelper().findCurios(player, i -> i.getItem() instanceof HeartstoneItem);
-        if (!found.isEmpty()) return found.get(0).stack();
-        return ItemStack.EMPTY;
+    public static List<ItemStack> getHeartstones(Player player) {
+        return CuriosApi.getCuriosHelper()
+                .findCurios(player, i -> i.getItem() instanceof HeartstoneItem)
+                .stream().map(SlotResult::stack).toList();
     }
 }

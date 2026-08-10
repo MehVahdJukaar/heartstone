@@ -12,6 +12,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -107,39 +108,30 @@ public class HeartstoneItem extends Item {
         return null;
     }
 
+    /**
+     * Every heartstone a player carries, wherever it is: main inventory, offhand, armor slots or
+     * an accessory slot from trinkets/curios.
+     */
     public static List<ItemStack> getAllHeartstones(Player player) {
         List<ItemStack> found = new ArrayList<>();
-        player.getInventory().items.stream().filter(i -> i.getItem() instanceof HeartstoneItem).forEach(found::add);
-        if (Heartstone.TRINKETS) {
-            ItemStack s = TrinketsCompat.getHeartstone(player);
-            if (!s.isEmpty()) found.add(s);
+        Inventory inventory = player.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); ++i) {
+            ItemStack stack = inventory.getItem(i);
+            if (stack.getItem() instanceof HeartstoneItem) found.add(stack);
         }
-        if (Heartstone.CURIO) {
-            ItemStack s = CurioCompat.getHeartstone(player);
-            if (!s.isEmpty()) found.add(s);
-        }
+        if (Heartstone.TRINKETS) found.addAll(TrinketsCompat.getHeartstones(player));
+        if (Heartstone.CURIO) found.addAll(CurioCompat.getHeartstones(player));
         return found;
     }
 
 
-    public static boolean arePlayersBound(Player pPlayer, ItemStack original, Player target, boolean sameDimension) {
-        if (sameDimension && target.level().dimension() != pPlayer.level().dimension()) return false;
-        if (target != pPlayer) {
-            Long id = getHeartstoneId(original);
-            if (id == null) return false;
-            var inv = target.getInventory();
-            for (int i = 0; i < inv.getContainerSize(); ++i) {
-                ItemStack s = inv.getItem(i);
-                if (hasMatchingId(id, s)) return true;
-            }
-            if (Heartstone.TRINKETS) {
-                ItemStack s = TrinketsCompat.getHeartstone(target);
-                if (!s.isEmpty() && hasMatchingId(id, s)) return true;
-            }
-            if (Heartstone.CURIO) {
-                ItemStack s = CurioCompat.getHeartstone(target);
-                return !s.isEmpty() && hasMatchingId(id, s);
-            }
+    public static boolean arePlayersBound(Player player, ItemStack original, Player target, boolean sameDimension) {
+        if (target == player) return false;
+        if (sameDimension && target.level().dimension() != player.level().dimension()) return false;
+        Long id = getHeartstoneId(original);
+        if (id == null) return false;
+        for (ItemStack stack : getAllHeartstones(target)) {
+            if (hasMatchingId(id, stack)) return true;
         }
         return false;
     }

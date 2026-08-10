@@ -1,7 +1,3 @@
-import org.apache.commons.io.output.ByteArrayOutputStream
-import org.gradle.internal.extensions.core.serviceOf
-import java.nio.charset.Charset
-
 plugins {
     id("com.possible-triangle.core")
     id("com.possible-triangle.common") apply false
@@ -12,20 +8,13 @@ plugins {
 }
 
 mod {
-    val mod_description: String by extra
-    val mod_credits: String by extra
-    val mod_license: String by extra
-    val mod_homepage: String by extra
-    val mod_github: String by extra
-    val mod_authors: String by extra
-    val moonlight_min_version: String by extra
-    additional.add("mod_description", provider { mod_description })
-    additional.add("mod_credits", provider { mod_credits })
-    additional.add("mod_license", provider { mod_license })
-    additional.add("mod_homepage", provider { mod_homepage })
-    additional.add("mod_authors", provider { mod_authors })
-    additional.add("mod_github", provider { mod_github })
-    additional.add("moonlight_min_version", provider { moonlight_min_version })
+    additional.add("mod_description")
+    additional.add("mod_credits")
+    additional.add("mod_license")
+    additional.add("mod_homepage")
+    additional.add("mod_github")
+    additional.add("mod_authors")
+    additional.add("moonlight_min_version")
 }
 
 
@@ -36,25 +25,20 @@ subprojects {
     apply(plugin = "dev.mixinmcp.decompile")
     apply(plugin = "maven-publish")
 
-    dependencies {
-        compileOnly("net.mehvahdjukaar:candlelight:1.2.6")
-    }
-
-
-    tasks.withType<GenerateModuleMetadata>().configureEach {
-        enabled = true
-    }
-
     repositories {
         nexus()
     }
 
+    dependencies {
+        compileOnly("net.mehvahdjukaar:candlelight:1.2.6")
+    }
 
+    tasks.withType<JavaCompile> {
+        options.compilerArgs.addAll(listOf("-Xmaxerrs", "4000"))
+    }
 
     upload {
-        maven {
-            nexus()
-        }
+
         curseforge {
             dependencies {
                 required("selene")
@@ -70,12 +54,18 @@ subprojects {
             changelog = rootProject.file("changelog.md").readText()
             versionName = "${mod.id.get()}-${mod.version.get()}-${project.name}"
         }
+
+        maven {
+            nexus()
+        }
     }
 
-    tasks.withType<JavaCompile> {
-        options.compilerArgs.addAll(listOf("-Xmaxerrs", "4000"))
+    // The upload plugin does not expose CurseForge's mandatory environment group, so add it here.
+    tasks.withType<net.darkhax.curseforgegradle.TaskPublishCurseForge>().configureEach {
+        doFirst {
+            uploadArtifacts.forEach { it.addEnvironment("Client", "Server") }
+        }
     }
-
 
     repositories {
         // Standard repositories
@@ -96,7 +86,6 @@ subprojects {
         maven { url = uri("https://maven.createmod.net") } // Create Mod, Ponder, Flywheel
         maven { url = uri("https://maven.blamejared.com") } // JEI, Vazkii's Mods
         maven { url = uri("https://maven.ladysnake.org/releases") } // Ladysnake mods
-        maven { url = uri("https://maven.tterrag.com/") } // Flywheel, EnderIO
         maven { url = uri("https://mvn.devos.one/releases/") } // Registrate, Porting Lib (releases)
         maven { url = uri("https://mvn.devos.one/snapshots/") } // Registrate, Porting Lib (snapshots)
         maven { url = uri("https://maven.terraformersmc.com/") } // TerraformersMC mods
@@ -111,43 +100,5 @@ subprojects {
         maven { url = uri("https://raw.githubusercontent.com/Fuzss/modresources/main/maven") } // Fuzss' Mod Resources
         maven { url = uri("https://maven.jamieswhiteshirt.com/libs-release") } // Jamie's Mods
         maven { url = uri("https://maven.ryanhcode.dev/releases") }
-    }
-}
-
-
-
-tasks.register("buildAndPublishAll") {
-    group = "build"
-    description = "Runs clean, build, publish for all projects"
-
-    dependsOn(subprojects.map { it.tasks.named("clean") })
-    dependsOn(subprojects.map { it.tasks.named("build") })
-    dependsOn(subprojects.map { it.tasks.named("upload") })
-
-    finalizedBy("gitTag")
-}
-
-tasks.register("gitTag") {
-    group = "build"
-    doLast {
-        val execOps = serviceOf<ExecOperations>() // Fetches the service
-        val tag = project.version.toString()
-        val stdout = ByteArrayOutputStream()
-
-        execOps.exec {
-            commandLine("git", "tag", "-l", tag)
-            standardOutput = stdout
-        }
-
-        if (!stdout.toString(Charset.defaultCharset()).trim().isEmpty()) {
-            logger.warn("Git tag '${tag}' already exists")
-        } else {
-            execOps.exec {
-                commandLine("git", "tag", "-a", tag, "-m", "Release $tag")
-            }
-            execOps.exec {
-                commandLine("git", "push", "origin", tag)
-            }
-        }
     }
 }

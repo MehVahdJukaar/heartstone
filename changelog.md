@@ -1,1 +1,6 @@
-1.21
+- fixed #27
+- Heartstones in the offhand or in an armor slot are now found too, not just the main inventory
+- Fixed map markers when carrying several heartstones at once: only some of the bound players got one
+- Trinkets and Curios slots now report every heartstone worn instead of just the first
+- Fixed the highlight color config showing up as fully transparent
+- Added Korean, Japanese and Latin American Spanish translations

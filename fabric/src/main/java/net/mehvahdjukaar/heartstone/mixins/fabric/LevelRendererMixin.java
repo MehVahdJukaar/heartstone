@@ -8,6 +8,7 @@ import net.mehvahdjukaar.heartstone.HeartstoneClient;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.renderer.*;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.Entity;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
@@ -30,10 +31,8 @@ public class LevelRendererMixin {
         if (HeartstoneClient.isPlayerHighlighted(entity)) {
             OutlineBufferSource outlinebuffersource = renderBuffers.outlineBufferSource();
             int color = Heartstone.HIGHLIGHT_COLOR.get();
-            int k = color >> 16 & 0xFF;
-            int l = color >> 8 & 0xFF;
-            int i1 = color & 0xFF;
-            outlinebuffersource.setColor(k, l, i1, 255);
+            outlinebuffersource.setColor(FastColor.ARGB32.red(color), FastColor.ARGB32.green(color),
+                    FastColor.ARGB32.blue(color), FastColor.ARGB32.alpha(color));
             return outlinebuffersource;
         }
         return bufferSource;
