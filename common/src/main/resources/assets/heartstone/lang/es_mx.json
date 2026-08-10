@@ -1,0 +1,26 @@
+{
+  "item.heartstone.heartstone": "Piedra corazón",
+  "subtitle.heartstone.sub": "Piedra corazón suena",
+  "message.heartstone.id": "Id: %s",
+  "message.heartstone.cracked": "Agrietado",
+  "item.minecraft.firework_star.shape.heartstone:heart": "Forma de corazón",
+
+  "block.heartstone.banner.heart.black": "Corazón negro",
+  "block.heartstone.banner.heart.blue": "Corazón azul",
+  "block.heartstone.banner.heart.brown": "Corazón café",
+  "block.heartstone.banner.heart.cyan": "Corazón cian",
+  "block.heartstone.banner.heart.gray": "Corazón gris",
+  "block.heartstone.banner.heart.green": "Corazón verde",
+  "block.heartstone.banner.heart.light_blue": "Corazón azul claro",
+  "block.heartstone.banner.heart.light_gray": "Corazón gris claro",
+  "block.heartstone.banner.heart.lime": "Corazón verde lima",
+  "block.heartstone.banner.heart.magenta": "Corazón magenta",
+  "block.heartstone.banner.heart.orange": "Corazón naranja",
+  "block.heartstone.banner.heart.pink": "Corazón rosa",
+  "block.heartstone.banner.heart.purple": "Corazón morado",
+  "block.heartstone.banner.heart.red": "Corazón rojo",
+  "block.heartstone.banner.heart.white": "Corazón blanco",
+  "block.heartstone.banner.heart.yellow": "Corazón amarillo",
+  "item.heartstone.heart_banner_pattern.desc": "Corazón",
+  "item.heartstone.heart_banner_pattern": "Diseño de estandarte"
+}
