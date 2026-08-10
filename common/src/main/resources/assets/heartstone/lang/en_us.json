@@ -4,7 +4,6 @@
   "message.heartstone.id": "Id: %s",
   "message.heartstone.cracked": "Cracked",
   "item.minecraft.firework_star.shape.heartstone:heart": "Heart Shaped",
-
   "block.heartstone.banner.heart.black": "Black Heart",
   "block.heartstone.banner.heart.blue": "Blue Heart",
   "block.heartstone.banner.heart.brown": "Brown Heart",
@@ -22,5 +21,6 @@
   "block.heartstone.banner.heart.white": "White Heart",
   "block.heartstone.banner.heart.yellow": "Yellow Heart",
   "item.heartstone.heart_banner_pattern.desc": "Heart",
-  "item.heartstone.heart_banner_pattern": "Banner Pattern"
+  "item.heartstone.heart_banner_pattern": "Banner Pattern",
+  "tag.banner_pattern.heartstone.pattern_item.heart": "Heart"
 }

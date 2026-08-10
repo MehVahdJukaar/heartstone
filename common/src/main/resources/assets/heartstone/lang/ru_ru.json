@@ -1,5 +1,6 @@
 {
   "item.heartstone.heartstone": "Сердечный камень",
   "subtitle.heartstone.sub": "Стук сердечного камня",
-  "message.heartstone.id": "Id: %s"
+  "message.heartstone.id": "Id: %s",
+  "tag.banner_pattern.heartstone.pattern_item.heart": "Heart"
 }

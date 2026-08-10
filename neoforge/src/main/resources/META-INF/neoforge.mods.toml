@@ -1,6 +1,5 @@
-
 modLoader = "javafml"
-loaderVersion = "${loader_version_range}"
+loaderVersion = "*"
 
 license = "${mod_license}"
 issueTrackerURL = "${mod_github}/issues"
@@ -19,28 +18,27 @@ authors = "${mod_authors}"
 credits = "${mod_credits}"
 description = '''${mod_description}'''
 modUrl = "${mod_homepage}"
-itemIcon="heartstone:heartstone" #catalogue icon
-enumExtensions="META-INF/enumextensions.json"
+itemIcon = "heartstone:heartstone"
+enumExtensions = "META-INF/enumextensions.json"
 
 [[dependencies.${mod_id}]]
 modId = "neoforge"
 type = "required"
-versionRange = "${neo_version_range}"
+versionRange = "*"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.${mod_id}]]
 modId = "minecraft"
 type = "required"
-versionRange = "[${minecraft_min_version},${minecraft_max_version})"
+versionRange = "[${minecraft_version}]"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.${mod_id}]]
-modId="moonlight"
-mandatory=true
-versionRange="*"
-ordering="NONE"
-side="BOTH"
-
-
+modId = "moonlight"
+type = "required"
+referralUrl = "https://www.curseforge.com/minecraft/mc-mods/selene"
+versionRange = "[${moonlight_min_version},)"
+ordering = "NONE"
+side = "BOTH"

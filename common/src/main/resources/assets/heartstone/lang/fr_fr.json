@@ -1,5 +1,6 @@
 {
   "item.heartstone.heartstone": "Pierre De Coeur",
   "subtitle.heartstone.sub": "Coup De Coeur En Pierre",
-  "message.heartstone.id": "Id: %s"
+  "message.heartstone.id": "Id: %s",
+  "tag.banner_pattern.heartstone.pattern_item.heart": "Heart"
 }

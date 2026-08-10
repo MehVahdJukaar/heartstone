@@ -8,7 +8,7 @@ import net.mehvahdjukaar.moonlight.api.map.decoration.MLMapDecorationType;
 import net.mehvahdjukaar.moonlight.api.map.decoration.MLMapMarker;
 import net.mehvahdjukaar.moonlight.api.map.decoration.SimpleMapMarker;
 import net.mehvahdjukaar.moonlight.api.misc.EventCalled;
-import net.mehvahdjukaar.moonlight.api.misc.HolderReference;
+import net.mehvahdjukaar.moonlight.api.misc.HolderRef;
 import net.mehvahdjukaar.moonlight.api.platform.ClientHelper;
 import net.mehvahdjukaar.moonlight.api.platform.PlatHelper;
 import net.mehvahdjukaar.moonlight.api.platform.RegHelper;
@@ -112,8 +112,8 @@ public class Heartstone {
         MoonlightEventsHelper.addListener(Heartstone::onPlayerDeath, IDropItemOnDeathEvent.class);
     }
 
-    public static final HolderReference<MLMapDecorationType<?, ?>> HEARTSTONE_MARKER =
-            HolderReference.of(res("heartstone"), MapDataRegistry.REGISTRY_KEY);
+    public static final HolderRef<MLMapDecorationType<?, ?>> HEARTSTONE_MARKER =
+            HolderRef.of(res("heartstone"), MapDataRegistry.MAP_DECORATION_REGISTRY_KEY);
 
 
     private static Set<MLMapMarker<?>> getDynamicDecorations(

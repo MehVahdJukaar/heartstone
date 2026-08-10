@@ -13,10 +13,14 @@
   },
   "license": "${mod_license}",
   "icon": "icon.png",
+  "accessWidener": "heartstone.accesswidener",
   "environment": "*",
   "entrypoints": {
     "main": [
       "net.mehvahdjukaar.heartstone.fabric.HeartstoneFabric"
+    ],
+    "modmenu": [
+      "net.mehvahdjukaar.heartstone.fabric.ModMenuCompat"
     ]
   },
   "mixins": [
@@ -25,7 +29,7 @@
   ],
   "depends": {
     "fabric": "*",
-    "minecraft": ">=${minecraft_min_version} <${minecraft_max_version}",
-    "moonlight": "*"
+    "minecraft": "=${minecraft_version}",
+    "moonlight": ">=${moonlight_min_version}"
   }
 }

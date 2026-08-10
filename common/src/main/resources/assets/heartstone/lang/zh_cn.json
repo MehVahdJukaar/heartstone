@@ -1,5 +1,6 @@
 {
   "item.heartstone.heartstone": "寻心石",
   "subtitle.heartstone.sub": "寻心石：闷响",
-  "message.heartstone.id": "Id：%s"
+  "message.heartstone.id": "Id：%s",
+  "tag.banner_pattern.heartstone.pattern_item.heart": "Heart"
 }
