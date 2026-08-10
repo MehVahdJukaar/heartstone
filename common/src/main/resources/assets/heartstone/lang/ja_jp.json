@@ -1,0 +1,26 @@
+{
+  "item.heartstone.heartstone": "ハートストーン",
+  "subtitle.heartstone.sub": "ハートストーンが鈍い音を立てる",
+  "message.heartstone.id": "ID：%s",
+  "message.heartstone.cracked": "ひび割れている",
+  "item.minecraft.firework_star.shape.heartstone:heart": "ハート型",
+
+  "block.heartstone.banner.heart.black": "黒色のハートの模様",
+  "block.heartstone.banner.heart.blue": "青色のハートの模様",
+  "block.heartstone.banner.heart.brown": "茶色のハートの模様",
+  "block.heartstone.banner.heart.cyan": "青緑色のハートの模様",
+  "block.heartstone.banner.heart.gray": "灰色のハートの模様",
+  "block.heartstone.banner.heart.green": "緑色のハートの模様",
+  "block.heartstone.banner.heart.light_blue": "空色のハートの模様",
+  "block.heartstone.banner.heart.light_gray": "薄灰色のハートの模様",
+  "block.heartstone.banner.heart.lime": "黄緑色のハートの模様",
+  "block.heartstone.banner.heart.magenta": "赤紫色のハートの模様",
+  "block.heartstone.banner.heart.orange": "橙色のハートの模様",
+  "block.heartstone.banner.heart.pink": "桃色のハートの模様",
+  "block.heartstone.banner.heart.purple": "紫色のハートの模様",
+  "block.heartstone.banner.heart.red": "赤色のハートの模様",
+  "block.heartstone.banner.heart.white": "白色のハートの模様",
+  "block.heartstone.banner.heart.yellow": "黄色のハートの模様",
+  "item.heartstone.heart_banner_pattern.desc": "ハートの模様",
+  "item.heartstone.heart_banner_pattern": "旗の模様"
+}
